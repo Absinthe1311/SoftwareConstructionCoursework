@@ -5,11 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 /*
- *  客户类 
- * 1.客户的名字
- * 2.客户的电话
- * 3.客户的地址
- * 4.ToString方法，用于显示客户信息
+ *  客户类 被用于Order类
+ *  属性：姓名：Name 电话：Phone 地址：Address
  */
 
 namespace Assignment5
@@ -20,6 +17,12 @@ namespace Assignment5
         public string Phone { get; set; }
         public string Address { get; set; }
         public override string ToString() => $"客户: {Name}, 电话: {Phone}, 地址: {Address}";
+        public override bool Equals(object? obj)
+        {
+            if(obj == null || obj.GetType() != typeof(Customer)) return false;
+            Customer other = (Customer)obj;
+            return (Name == other.Name && Phone == other.Phone && Address == other.Address);
+        }
 
         //客户的构造函数
         public Customer(string name, string phone, string address)
@@ -27,6 +30,12 @@ namespace Assignment5
             Name = name;
             Phone = phone;
             Address = address;
+        }
+        public Customer(Customer customer)
+        {
+            this.Name = customer.Name;
+            this.Phone = customer.Phone;
+            this.Address = customer.Address;
         }
     }
 }

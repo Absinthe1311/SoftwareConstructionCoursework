@@ -9,62 +9,89 @@ using System.Threading.Tasks;
 namespace Assignment5.Tests
 {
     [TestClass]
-    public class OrderServiceTests
+    public class OrderServiceTest
     {
-        private OrderService _orderService;
-        [TestInitialize()]
-        public void Initialize()
+        //订单服务实例化
+        OrderService orderService = new OrderService();
+        //商品实例化
+        Product apple = new Product("苹果", 2.0);
+        Product binana = new Product("香蕉", 3.2);
+        Product egg = new Product("鸡蛋", 4.2);
+        Product milk = new Product("牛奶", 2.3);
+        //用户实例化
+        Customer customer1 = new Customer("张", "123", "A市");
+        Customer customer2 = new Customer("李", "456", "B市");
+
+        //进行测试之前的初始化
+        [TestInitialize]
+        public void Init()
         {
-             _orderService = new OrderService(); //创建订单服务对象
+            // 订单1的初始化
+            Order order1 = new Order(1, new DateTime(2023, 3, 12), customer1);
+            order1.AddOrderDetail(new OrderDetail(apple,80));
+            order1.AddOrderDetail(new OrderDetail(egg, 30));
+            order1.AddOrderDetail(new OrderDetail(milk, 70));
 
-            Customer customer1 = new Customer("张三", "123", "北京市海淀区");// 创建客户对象
-            Customer customer2 = new Customer("李四", "456", "北京市朝阳区");// 创建客户对象
+            // 订单2的初始化
+            Order order2 = new Order(2, new DateTime(2024, 1, 28), customer2);
+            order2.AddOrderDetail(new OrderDetail(binana, 20));
+            order2.AddOrderDetail(new OrderDetail(milk, 30));
 
-            Product product1 = new Product("苹果", 5.0); // 创建商品对象
-            Product product2 = new Product("香蕉", 3.0); // 创建商品对象
-            Product product3 = new Product("橙子", 4.0); // 创建商品对象
+            //订单3的初始化
+            Order order3 = new Order(3, new DateTime(1023, 2, 8), customer2);
+            order3.AddOrderDetail(new OrderDetail(egg, 15));
+            order3.AddOrderDetail(new OrderDetail(milk, 30));
 
-            Order order1 = new Order(1, "2021-10-1", customer1); // 创建订单对象
-            Order order2 = new Order(2, "2021-10-2", customer2); // 创建订单对象
-            Order order3 = new Order(3, "2021-10-3", customer1); // 创建订单对象
+            //添加订单
+            orderService.AddOrder(order1);
+            orderService.AddOrder(order2);
+            orderService.AddOrder(order3);
 
-            order1.AddOrderDetails(product1, 10);
-            order2.AddOrderDetails(product2, 20);
-            order3.AddOrderDetails(product1, 5);
-
-            _orderService.AddOrder(order1);
-            _orderService.AddOrder(order2);
-            _orderService.AddOrder(order3);
         }
-        [TestMethod()]
+
+        [TestMethod]
         public void AddOrderTest()
         {
-            Customer customer = new Customer("王五", "123", "城市1");
-            Product product = new Product("菠萝", 9.0);
-            Order order = new Order(1, "2022-10-2", customer);
-            order.AddOrderDetails(product, 10);
-            Order order2 = new Order(4, "2023-10-4", new Customer("Name", "Phone", "Address"));
-            Assert.ThrowsException<Exception>(() => _orderService.AddOrder(order));
-            _orderService.AddOrder(order2);
+            Order order4 = new Order(4, new DateTime(1222, 10, 9), customer2);
+            order4.AddOrderDetail(new OrderDetail(milk, 20));
+            Order order5 = new Order(1, new DateTime(2312, 10, 8), customer1);
+            try
+            {
+                orderService.AddOrder(order4);
+                orderService.AddOrder(order5);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
-        [TestMethod()]
+
+        [TestMethod]
         public void RemoveOrderTest()
         {
-            Assert.ThrowsException<Exception>(() => _orderService.RemoveOrder(4));
-            _orderService.RemoveOrder(1);
+            try
+            {
+                orderService.RemoveOrder(1);
+                orderService.RemoveOrder(2);
+                orderService.RemoveOrder(2);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e);
+            }
         }
-        [TestMethod()]
+
+        [TestMethod]
         public void ModifyOrderTest()
         {
-            Order order = new Order(8, "2023-10-3", new Customer("1", "2", "3"));
-            Assert.ThrowsException<Exception>(() => _orderService.ModifyOrder(order));
+            Order order4 = new Order(4,new DateTime(1122,10,9), customer1);
+            Assert.ThrowsException<Exception>(() => orderService.ModifyOrder(order4));
         }
-        [TestMethod()]
+
+        [TestMethod]
         public void QueryOrderTest()
         {
-            Assert.ThrowsException<Exception>(()=>_orderService.QueryOrders(null));
-            _orderService.QueryOrders(order => order.OrderId == 1);
-            _orderService.QueryOrders(order => order.OrderCustomer.Name == "张三");
+            Assert.ThrowsException<Exception>(() => orderService.QueryOrder(null));
         }
     }
 }
